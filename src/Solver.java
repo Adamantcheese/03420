@@ -13,6 +13,7 @@ public class Solver extends Thread {
 
     public void run() {
         do {
+            //DO THE MINMAX HERE, implement a similar kill method for both the min and max functions to exit ASAP once it is set
 
         } while(!stop);
     }
