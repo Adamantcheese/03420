@@ -53,12 +53,14 @@ public class Project3 {
                     System.out.println("That isn't a valid move!");
                 } else if(board[userMove[0]][userMove[1]] != '-') {
                     System.out.println("That isn't a valid move!");
+                } else if(userMove[0] < 0 || userMove[0] > 7 || userMove[1] < 0 || userMove[1] > 7) {
+                    System.out.println("That isn't a valid move!");
                 } else {
                     break;
                 }
             }
 
-            board[userMove[0]][userMove[1]] = 'x';
+            board[userMove[0]][userMove[1]] = 'o';
 
             printBoard(board);
         }
@@ -77,7 +79,7 @@ public class Project3 {
             s.kill();
 
             int[] compMove = s.getMove();
-            board[compMove[0]][compMove[1]] = 'o';
+            board[compMove[0]][compMove[1]] = 'x';
 
             printBoard(board);
 
@@ -92,12 +94,14 @@ public class Project3 {
                     System.out.println("That isn't a valid move!");
                 } else if(board[userMove[0]][userMove[1]] != '-') {
                     System.out.println("That isn't a valid move!");
+                } else if(userMove[0] < 0 || userMove[0] > 7 || userMove[1] < 0 || userMove[1] > 7) {
+                    System.out.println("That isn't a valid move!");
                 } else {
                     break;
                 }
             }
 
-            board[userMove[0]][userMove[1]] = 'x';
+            board[userMove[0]][userMove[1]] = 'o';
 
             printBoard(board);
         }
@@ -142,6 +146,9 @@ public class Project3 {
                 break;
             case 'h':
                 ret[0] = 7;
+                break;
+            default:
+                ret[0] = 500;
                 break;
         }
         ret[1] = Integer.parseInt(input.substring(1)) - 1;
