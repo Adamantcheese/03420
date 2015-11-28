@@ -6,12 +6,12 @@ import java.util.ArrayList;
 public class Solver {
     private Board board;
     private int[] calculatedMove;
+    private long runtime;
     private long maxRuntime;
-    private long startRuntime;
 
     public Solver(Board b, int t) {
         board = b;
-        maxRuntime = t * 1000;
+        runtime = t * 1000;
     }
 
     public int[] getMove() {
@@ -19,25 +19,23 @@ public class Solver {
     }
 
     public void solve() {
-        startRuntime = System.currentTimeMillis();
-        alphaBetaPrune(board, true, Integer.MIN_VALUE, Integer.MAX_VALUE, 5000);
+        maxRuntime = System.currentTimeMillis() + runtime;
+        alphaBetaPrune(board, true, Integer.MIN_VALUE, Integer.MAX_VALUE, 10);
     }
 
     private int alphaBetaPrune(Board b, boolean maxPlayer, int alpha, int beta, int depth) {
-        int score = b.getEvaluationValue();
-
         //Cutoff test, non-threaded
-        if(System.currentTimeMillis() - startRuntime >= maxRuntime || depth == 0) {
-            calculatedMove = b.getLastMove();
-            return score;
+        if(System.currentTimeMillis() >= maxRuntime || depth == 0) {
+            return b.getEvaluationValue();
         }
 
-        //populate children
+        int score;
         ArrayList<Board> children = populateChildren(board, maxPlayer ? 'x' : 'o');
         if (maxPlayer) {
             for (Board child : children) {
                 score = alphaBetaPrune(child, false, alpha, beta, depth - 1);
                 if (score > alpha) {
+                    calculatedMove = child.getLastMove();
                     alpha = score;
                 } else if (alpha >= beta) {
                     break;
@@ -48,6 +46,7 @@ public class Solver {
             for (Board child : children) {
                 score = alphaBetaPrune(child, true, alpha, beta, depth - 1);
                 if (score < beta) {
+                    calculatedMove = child.getLastMove();
                     beta = score;
                 } else if (alpha <= beta) {
                     break;
@@ -63,10 +62,6 @@ public class Solver {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if(System.currentTimeMillis() - startRuntime >= maxRuntime) {
-                    return children;
-                }
-
                 char[][] childBoard = new char[8][8];
                 for (int k = 0; k < 8; k++) {
                     for (int l = 0; l < 8; l++) {
