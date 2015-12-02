@@ -19,22 +19,16 @@ public class Board {
         numMoves = 0;
     }
 
-    public Board(char[][] b, int[] lastMv) {
+    public Board(char[][] b, int[] lastMv, int moves) {
         board = b;
         latestMove = lastMv;
+        numMoves = moves;
         calcEvalValue();
-        numMoves = 0;
-        for(int i = 0; i < 8; i++) {
-            for(int j = 0; j < 8; j++) {
-                if(board[i][j] != '-') {
-                    numMoves++;
-                }
-            }
-        }
     }
 
     public void makeMove(int[] move, char token) {
         board[move[0]][move[1]] = token;
+        latestMove = move;
         numMoves++;
     }
 
@@ -122,135 +116,95 @@ public class Board {
         return evaluationValue;
     }
 
-    private void calcEvalValue() {
-        if (numMoves < 2) {
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    int tempAdd;
-                    if (board[i][j] == 'x') {
-                        tempAdd = 1;
-                    } else if (board[i][j] == 'o') {
-                        tempAdd = -1;
-                    } else {
-                        tempAdd = 0;
-                    }
-                    switch (i) {
-                        case 3:
-                        case 4:
-                            tempAdd *= 2;
-                        case 2:
-                        case 5:
-                            tempAdd *= 2;
-                        case 1:
-                        case 6:
-                            tempAdd *= 2;
-                        case 0:
-                        case 7:
-                            break;
-                    }
-                    switch (j) {
-                        case 3:
-                        case 4:
-                            tempAdd *= 2;
-                        case 2:
-                        case 5:
-                            tempAdd *= 2;
-                        case 1:
-                        case 6:
-                            tempAdd *= 2;
-                        case 0:
-                        case 7:
-                            break;
-                    }
-                    evaluationValue += tempAdd;
-                }
-            }
-        } else {
-            for (int i = 0; i < 8; i++) {
-                int state = 0, count = 0;
-                for (int j = 0; j < 8; j++) {
-                    switch (state) {
-                        case 0:
-                            if (board[i][j] == 'x') {
-                                state = 1;
-                                count = 1;
-                            } else if (board[i][j] == 'o') {
-                                state = 2;
-                                count = 1;
-                            }
-                            break;
-                        case 1:
-                            if (board[i][j] == '-') {
-                                if (4 - count > 0) {
-                                    count++;
-                                }
-                            } else if (board[i][j] == 'x') {
-                                count++;
-                            } else if (board[i][j] == 'o') {
-                                evaluationValue += Math.pow(16.0, count);
-                                state = 2;
-                                count = 1;
-                            }
-                            break;
-                        case 2:
-                            if (board[i][j] == '-') {
-                                if (4 - count > 0) {
-                                    count++;
-                                }
-                            } else if (board[i][j] == 'x') {
-                                evaluationValue -= 2*Math.pow(16.0, count);
-                                state = 1;
-                                count = 1;
-                            } else if (board[i][j] == 'o') {
-                                count++;
-                            }
-                            break;
-                    }
-                }
-            }
+    public int getMoveCount() {
+        return numMoves;
+    }
 
-            for (int i = 0; i < 8; i++) {
-                int state = 0, count = 0;
-                for (int j = 0; j < 8; j++) {
-                    switch (state) {
-                        case 0:
-                            if (board[j][i] == 'x') {
-                                state = 1;
-                                count = 1;
-                            } else if (board[j][i] == 'o') {
-                                state = 2;
-                                count = 1;
-                            }
+    private void calcEvalValue() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                int tempAdd;
+                if (board[i][j] == 'x') {
+                    tempAdd = 1;
+                } else if (board[i][j] == 'o') {
+                    tempAdd = -1;
+                } else {
+                    tempAdd = 0;
+                }
+                switch (i) {
+                    case 3:
+                    case 4:
+                        tempAdd *= 2;
+                    case 2:
+                    case 5:
+                        tempAdd *= 2;
+                    case 1:
+                    case 6:
+                        tempAdd *= 2;
+                    case 0:
+                    case 7:
+                        break;
+                }
+                switch (j) {
+                    case 3:
+                    case 4:
+                        tempAdd *= 2;
+                    case 2:
+                    case 5:
+                        tempAdd *= 2;
+                    case 1:
+                    case 6:
+                        tempAdd *= 2;
+                    case 0:
+                    case 7:
+                        break;
+                }
+                evaluationValue += tempAdd;
+            }
+        }
+
+        for(int i = 0; i < 8; i++) {
+            int tempAdd = 0;
+            for(int j = 0; j < 5; j++) {
+                int numX = 0, numO = 0, numH = 0;
+                for(int k = 0; k < 4; k++) {
+                    switch (board[i][j + k]) {
+                        case '-':
+                            numH++;
                             break;
-                        case 1:
-                            if (board[j][i] == '-') {
-                                if (4 - count > 0) {
-                                    count++;
-                                }
-                            } else if (board[j][i] == 'x') {
-                                count++;
-                            } else if (board[j][i] == 'o') {
-                                evaluationValue += Math.pow(16.0, count);
-                                state = 2;
-                                count = 1;
-                            }
+                        case 'x':
+                            numX++;
                             break;
-                        case 2:
-                            if (board[j][i] == '-') {
-                                if (4 - count > 0) {
-                                    count++;
-                                }
-                            } else if (board[j][i] == 'x') {
-                                evaluationValue -= 2*Math.pow(16.0, count);
-                                state = 1;
-                                count = 1;
-                            } else if (board[j][i] == 'o') {
-                                count++;
-                            }
+                        case 'o':
+                            numO++;
                             break;
                     }
                 }
+                tempAdd += Math.pow(16.0, numX - numO + numH/2);
             }
+            evaluationValue += tempAdd;
+        }
+
+        for(int i = 0; i < 8; i++) {
+            int tempAdd = 0;
+            for(int j = 0; j < 5; j++) {
+                int numX = 0, numO = 0, numH = 0;
+                for(int k = 0; k < 4; k++) {
+                    switch (board[j + k][i]) {
+                        case '-':
+                            numH++;
+                            break;
+                        case 'x':
+                            numX++;
+                            break;
+                        case 'o':
+                            numO++;
+                            break;
+                    }
+                }
+                tempAdd += Math.pow(16.0, numX - numO + numH/2);
+            }
+            evaluationValue += tempAdd;
         }
     }
 }
