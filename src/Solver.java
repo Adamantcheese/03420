@@ -11,7 +11,7 @@ public class Solver {
     public Solver(Board b, int t) {
         board = b;
         maxRuntime = System.currentTimeMillis() + t * 1000;
-        for(int i = 1; i < 11; i++) {
+        for(int i = 2; i < 65; i+=2) {
             alphaBetaPrune(board, true, Integer.MIN_VALUE, Integer.MAX_VALUE, i);
         }
     }
@@ -27,13 +27,6 @@ public class Solver {
         }
 
         ArrayList<Board> children = populateChildren(b, maxPlayer ? 'x' : 'o');
-
-        for(Board child : children) {
-            if(child.getWinner() == 1) {
-                calculatedMove = child.getLastMove();
-                return child.getEvaluationValue();
-            }
-        }
 
         int score = 0;
         if (maxPlayer) {
@@ -78,7 +71,7 @@ public class Solver {
                     int[] move = new int[2];
                     move[0] = i;
                     move[1] = j;
-                    children.add(new Board(childBoard, move));
+                    children.add(new Board(childBoard, move, b.getMoveCount() + 1));
                 }
             }
         }
