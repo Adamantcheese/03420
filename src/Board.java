@@ -14,16 +14,17 @@ public class Board {
             }
         }
         latestMove = null;
+        evaluationValue = 0;
     }
 
     public Board(char[][] b, int[] lastMv) {
         board = b;
         latestMove = lastMv;
+        calcEvalValue();
     }
 
     public void makeMove(int[] move, char token) {
         board[move[0]][move[1]] = token;
-        latestMove = move;
     }
 
     public boolean testMove(int[] move) {
@@ -117,13 +118,10 @@ public class Board {
     }
 
     public int getEvaluationValue() {
-        calcEvalValue();
         return evaluationValue;
     }
 
     private void calcEvalValue() {
-        evaluationValue = 0;
-
         for(int i = 0; i < 8; i++) {
             for(int j = 0; j < 8; j++) {
                 int tempAdd;
@@ -137,7 +135,7 @@ public class Board {
                 switch (i) {
                     case 3:
                     case 4:
-                        tempAdd *= 4;
+                        tempAdd *= 2;
                     case 2:
                     case 5:
                         tempAdd *= 2;
@@ -151,7 +149,7 @@ public class Board {
                 switch (j) {
                     case 3:
                     case 4:
-                        tempAdd *= 4;
+                        tempAdd *= 2;
                     case 2:
                     case 5:
                         tempAdd *= 2;
@@ -167,41 +165,40 @@ public class Board {
         }
 
         for(int i = 0; i < 8; i++) {
+            int state = 0, count = 0, lookahead = 0;
             for(int j = 0; j < 8; j++) {
-                int state = 0;
-                int count = 0;
                 switch (state) {
                     case 0:
                         if(board[i][j] == 'x') {
                             state = 1;
-                            count = 0;
+                            count = 1;
                         } else if (board[i][j] == 'o') {
                             state = 2;
-                            count = 0;
+                            count = 1;
                         }
                         break;
                     case 1:
                         if(board[i][j] == '-') {
-                            evaluationValue += (count == 1 ? 1 : (count == 2 ? 4 : (count == 3 ? 16 : Integer.MAX_VALUE)));
+                            //TODO special case for lookahead
                             state = 0;
                             count = 0;
                         } else if (board[i][j] == 'x') {
                             count++;
                         } else if (board[i][j] == 'o') {
-                            evaluationValue += (count == 1 ? 1 : (count == 2 ? 4 : (count == 3 ? 16 : Integer.MAX_VALUE)));
+                            evaluationValue += Math.pow(16.0, count);
                             state = 2;
-                            count = 0;
+                            count = 1;
                         }
                         break;
                     case 2:
                         if(board[i][j] == '-') {
-                            evaluationValue += (count == 1 ? -1 : (count == 2 ? -4 : (count == 3 ? -16 : Integer.MIN_VALUE)));
+                            //TODO special case for lookahead
                             state = 0;
                             count = 0;
                         } else if (board[i][j] == 'x') {
-                            evaluationValue += (count == 1 ? -1 : (count == 2 ? -4 : (count == 3 ? -16 : Integer.MIN_VALUE)));
+                            evaluationValue -= Math.pow(16.0, count);
                             state = 1;
-                            count = 0;
+                            count = 1;
                         } else if (board[i][j] == 'o') {
                             count++;
                         }
@@ -211,41 +208,40 @@ public class Board {
         }
 
         for(int i = 0; i < 8; i++) {
+            int state = 0, count = 0, lookahead = 0;
             for(int j = 0; j < 8; j++) {
-                int state = 0;
-                int count = 0;
                 switch (state) {
                     case 0:
                         if(board[j][i] == 'x') {
                             state = 1;
-                            count = 0;
+                            count = 1;
                         } else if (board[j][i] == 'o') {
                             state = 2;
-                            count = 0;
+                            count = 1;
                         }
                         break;
                     case 1:
                         if(board[j][i] == '-') {
-                            evaluationValue += (count == 1 ? 1 : (count == 2 ? 4 : (count == 3 ? 16 : Integer.MAX_VALUE)));
+                            //TODO special case for lookahead
                             state = 0;
                             count = 0;
-                        } else if (board[j][i] == 'x') {
+                        } else if (board[j][i] == 'x'){
                             count++;
                         } else if (board[j][i] == 'o') {
-                            evaluationValue += (count == 1 ? 1 : (count == 2 ? 4 : (count == 3 ? 16 : Integer.MAX_VALUE)));
+                            evaluationValue += Math.pow(16.0, count);
                             state = 2;
-                            count = 0;
+                            count = 1;
                         }
                         break;
                     case 2:
                         if(board[j][i] == '-') {
-                            evaluationValue += (count == 1 ? -1 : (count == 2 ? -4 : (count == 3 ? -16 : Integer.MIN_VALUE)));
+                            //TODO special case for lookahead
                             state = 0;
                             count = 0;
                         } else if (board[j][i] == 'x') {
-                            evaluationValue += (count == 1 ? -1 : (count == 2 ? -4 : (count == 3 ? -16 : Integer.MIN_VALUE)));
+                            evaluationValue -= Math.pow(16.0, count);
                             state = 1;
-                            count = 0;
+                            count = 1;
                         } else if (board[j][i] == 'o') {
                             count++;
                         }

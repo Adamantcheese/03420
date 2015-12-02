@@ -63,7 +63,6 @@ public class Project3 {
             //do computer move
             System.out.println("Calculating computer move...");
             Solver s = new Solver(playBoard, time);
-            s.solve();
 
             int[] compMove = s.getMove();
             playBoard.makeMove(compMove, 'x');
@@ -75,8 +74,6 @@ public class Project3 {
             if(playBoard.getWinner() != 0) {
                 if (playBoard.getWinner() == 3) {
                     System.out.println("Draw!");
-                } else if (first) {
-                    System.out.println(playBoard.getWinner() == 1 ? "You won!" : "You lost!");
                 } else {
                     System.out.println(playBoard.getWinner() == 1 ? "You lost!" : "You won!");
                 }
@@ -106,8 +103,6 @@ public class Project3 {
             if(playBoard.getWinner() != 0) {
                 if (playBoard.getWinner() == 3) {
                     System.out.println("Draw!");
-                } else if (first) {
-                    System.out.println(playBoard.getWinner() == 1 ? "You won!" : "You lost!");
                 } else {
                     System.out.println(playBoard.getWinner() == 1 ? "You lost!" : "You won!");
                 }
@@ -151,7 +146,11 @@ public class Project3 {
                 ret[0] = 500;
                 break;
         }
-        ret[1] = Integer.parseInt(input.substring(1)) - 1;
+        try {
+            ret[1] = Integer.parseInt(input.substring(1)) - 1;
+        } catch (Exception e) {
+            return null;
+        }
         return ret;
     }
 

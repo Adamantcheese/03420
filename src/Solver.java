@@ -6,21 +6,18 @@ import java.util.ArrayList;
 public class Solver {
     private Board board;
     private int[] calculatedMove;
-    private long runtime;
     private long maxRuntime;
 
     public Solver(Board b, int t) {
         board = b;
-        runtime = t * 1000;
+        maxRuntime = System.currentTimeMillis() + t * 1000;
+        for(int i = 1; i < 11; i++) {
+            alphaBetaPrune(board, true, Integer.MIN_VALUE, Integer.MAX_VALUE, i);
+        }
     }
 
     public int[] getMove() {
         return calculatedMove;
-    }
-
-    public void solve() {
-        maxRuntime = System.currentTimeMillis() + runtime;
-        alphaBetaPrune(board, true, Integer.MIN_VALUE, Integer.MAX_VALUE, 10);
     }
 
     private int alphaBetaPrune(Board b, boolean maxPlayer, int alpha, int beta, int depth) {
@@ -29,13 +26,13 @@ public class Solver {
             return b.getEvaluationValue();
         }
 
-        int score;
-        ArrayList<Board> children = populateChildren(board, maxPlayer ? 'x' : 'o');
+        ArrayList<Board> children = populateChildren(b, maxPlayer ? 'x' : 'o');
+
+        int score = 0;
         if (maxPlayer) {
             for (Board child : children) {
                 score = alphaBetaPrune(child, false, alpha, beta, depth - 1);
                 if (score > alpha) {
-                    calculatedMove = child.getLastMove();
                     alpha = score;
                 } else if (alpha >= beta) {
                     break;
@@ -59,17 +56,17 @@ public class Solver {
 
     private ArrayList<Board> populateChildren(Board b, char token) {
         ArrayList<Board> children = new ArrayList<Board>();
+        char[][] parentBoard = b.getBoard();
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                char[][] childBoard = new char[8][8];
-                for (int k = 0; k < 8; k++) {
-                    for (int l = 0; l < 8; l++) {
-                        childBoard[k][l] = b.getBoard()[k][l];
+                if (parentBoard[i][j] == '-') {
+                    char[][] childBoard = new char[8][8];
+                    for (int k = 0; k < 8; k++) {
+                        for (int l = 0; l < 8; l++) {
+                            childBoard[k][l] = parentBoard[k][l];
+                        }
                     }
-                }
-
-                if (childBoard[i][j] == '-') {
                     childBoard[i][j] = token;
                     int[] move = new int[2];
                     move[0] = i;
