@@ -28,6 +28,13 @@ public class Solver {
 
         ArrayList<Board> children = populateChildren(b, maxPlayer ? 'x' : 'o');
 
+        for(Board child : children) {
+            if(child.getWinner() == 1) {
+                calculatedMove = child.getLastMove();
+                return child.getEvaluationValue();
+            }
+        }
+
         int score = 0;
         if (maxPlayer) {
             for (Board child : children) {

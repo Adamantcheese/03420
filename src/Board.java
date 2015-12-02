@@ -198,7 +198,7 @@ public class Board {
                                     count++;
                                 }
                             } else if (board[i][j] == 'x') {
-                                evaluationValue -= Math.pow(16.0, count);
+                                evaluationValue -= 2*Math.pow(16.0, count);
                                 state = 1;
                                 count = 1;
                             } else if (board[i][j] == 'o') {
@@ -241,7 +241,7 @@ public class Board {
                                     count++;
                                 }
                             } else if (board[j][i] == 'x') {
-                                evaluationValue -= Math.pow(16.0, count);
+                                evaluationValue -= 2*Math.pow(16.0, count);
                                 state = 1;
                                 count = 1;
                             } else if (board[j][i] == 'o') {
