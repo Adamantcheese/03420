@@ -181,6 +181,9 @@ public class Board {
                     }
                 }
                 tempAdd += Math.pow(16.0, numX - numO + numH/2);
+                if(numH<numX && numH<numO){
+                	tempAdd *=2;
+                }
             }
             evaluationValue += tempAdd;
         }
@@ -203,6 +206,9 @@ public class Board {
                     }
                 }
                 tempAdd += Math.pow(16.0, numX - numO + numH/2);
+                if(numH<numX && numH<numO){
+                	tempAdd *=2;
+                }
             }
             evaluationValue += tempAdd;
         }
